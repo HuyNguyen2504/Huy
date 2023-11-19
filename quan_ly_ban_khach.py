@@ -9,8 +9,10 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+import MySQLdb as mdb
 
-
+i=0
+table_size=0
 class Ui_quan_ly_ban_khach(object):
     def setupUi(self, quan_ly_ban_khach):
         quan_ly_ban_khach.setObjectName("quan_ly_ban_khach")
@@ -203,6 +205,10 @@ class Ui_quan_ly_ban_khach(object):
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout.setObjectName("verticalLayout")
+        self.initial_button_texts = ["Button 1", "Button 2", "Button 3", "Button 4"]
+        self.buttons = []
+
+        self.create_initial_buttons()
         self.frame = QtWidgets.QFrame(self.scrollAreaWidgetContents)
         self.frame.setMinimumSize(QtCore.QSize(0, 1200))
         self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -242,6 +248,42 @@ class Ui_quan_ly_ban_khach(object):
         self.label_7.setText(_translate("quan_ly_ban_khach", "Tên Bàn"))
         self.label_8.setText(_translate("quan_ly_ban_khach", "Trạng Thái"))
 
+    def create_initial_buttons(self):
+        # Xóa các nút hiện tại
+        global id
+        self.clear_buttons()
+        i=0
+        # Tạo và thêm các nút ban đầu
+        for text in self.initial_button_texts:
+            button = QtWidgets.QPushButton(self.scrollAreaWidgetContents)
+            font = QtGui.QFont()
+            font.setPointSize(14)
+            button.setFont(font)
+            button.setObjectName(f"{i+1}")
+            button.setText(f"   {i+1}                                   {i+1}                                    off")
+            
+            button.setCheckable(True)  # Cho phép nút bấm có trạng thái đã được bấm và trạng thái ban đầu
+            button.clicked.connect(lambda checked, btn=button: self.handle_button_click(btn)) # Truyền đối tượng nút bấm vào phương thức xử lý sự kiện
+            self.verticalLayout.addWidget(button)
+            self.buttons.append(button)
+            i+=1
+
+    def clear_buttons(self):
+        # Xóa các nút khỏi frame
+        for button in self.buttons:
+            self.verticalLayout.removeWidget(button)
+            button.deleteLater()  # Xóa đối tượng nút bấm
+
+        self.buttons = []
+
+    def handle_button_click(self, button):
+        global id
+        id=str(button.objectName())
+        if button.isChecked():
+            button.setText(f"   {id}                                   {id}                                    on")
+        else:
+            button.setText(f"   {id}                                   {id}                                    off")
+id=0
 
 if __name__ == "__main__":
     import sys
